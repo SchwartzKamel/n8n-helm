@@ -1,0 +1,6 @@
+apiVersion: v2
+name: n8n
+description: A Helm chart for n8n deployed on Azure Kubernetes Service (AKS)
+type: application
+version: 0.1.0
+appVersion: "0.193.0"  # Replace with the version of n8n you wish to deploy
