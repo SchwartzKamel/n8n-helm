@@ -1,0 +1,49 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # Update with your Azure service connection name.
+  azureSubscription: 'MyAzureServiceConnection'
+  aksClusterName: 'my-aks-cluster'
+  aksResourceGroup: 'my-aks-resource-group'
+  
+  # Path to the Helm chart.
+  helmChartPath: 'helm-chart'
+  releaseName: 'n8n'
+
+stages:
+- stage: Deploy
+  displayName: Deploy to AKS using Helm
+  jobs:
+  - job: HelmDeploy
+    displayName: Helm Deploy Job
+    steps:
+    - task: HelmInstaller@1
+      inputs:
+        helmVersionToInstall: 'latest'
+      
+    - task: AzureCLI@2
+      displayName: 'Get AKS Credentials'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "Getting credentials for AKS cluster $(aksClusterName) in resource group $(aksResourceGroup)"
+          az aks get-credentials --resource-group $(aksResourceGroup) --name $(aksClusterName)
+      
+    - task: HelmDeploy@0
+      displayName: 'Deploy via Helm'
+      inputs:
+        connectionType: 'None'  # We already got credentials.
+        command: 'upgrade'
+        chartType: 'FilePath'
+        chartPath: '$(helmChartPath)'
+        releaseName: '$(releaseName)'
+        namespace: 'default'
+        overrideValues: |
+          image.tag=$(Build.BuildId)  # If you built a new image, override the tag here.
+        install: true
