@@ -1,5 +1,6 @@
 # n8n-helm
 
+```
 helm-chart/
 ├── Chart.yaml
 ├── values.yaml
@@ -10,3 +11,4 @@ helm-chart/
     ├── pvc.yaml
     ├── service.yaml
     └── ingress.yaml
+```
