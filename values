@@ -1,0 +1,51 @@
+# Default values for n8n.
+
+# Number of replicas for the n8n deployment.
+replicaCount: 1
+
+# Container image settings.
+image:
+  repository: n8nio/n8n
+  pullPolicy: IfNotPresent
+  tag: "latest"  # Optionally, pin a specific version.
+
+# Service settings.
+service:
+  type: ClusterIP
+  port: 5678
+
+# Ingress configuration for external access.
+ingress:
+  enabled: false
+  annotations: {
+    # Example Azure Application Gateway annotations can go here.
+    # "appgw.ingress.kubernetes.io/use-private-ip": "false"
+  }
+  hosts:
+    - host: n8n.example.com
+      paths:
+        - /
+  tls: []  # If using TLS, configure here.
+
+# Resource requests and limits.
+resources: {}
+
+# Node scheduling settings.
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Persistent volume configurations.
+persistence:
+  enabled: true
+  storageClass: "default"
+  accessMode: ReadWriteOnce
+  size: 8Gi
+
+# Environment variables for n8n.
+env:
+  # Enable basic auth for production use.
+  N8N_BASIC_AUTH_ACTIVE: "true"
+  N8N_BASIC_AUTH_USER: "admin"
+  N8N_BASIC_AUTH_PASSWORD: "password"
+  # Additional environment settings specific to your Azure setup can be added here.
